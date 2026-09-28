@@ -1,0 +1,55 @@
+# Copy sample to know and understand what things to ignore
+# ==========================================
+# 1. PYTHON CACHES & COMPILED FILES
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# ==========================================
+# 2. VIRTUAL ENVIRONMENTS (Dependencies)
+# ==========================================
+venv/
+.venv/
+env/
+.env3/
+ENV/
+env.bak/
+build/
+dist/
+*.egg-info/
+
+# ==========================================
+# 3. ENVIRONMENT VARIABLES & SECRETS
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# 4. FASTAPI & PYTHON TOOLING CACHES
+# ==========================================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.cache/
+
+# ==========================================
+# 5. DATABASES (Local Development)
+# ==========================================
+*.db
+*.sqlite3
+
+# ==========================================
+# 6. IDE / EDITOR SPECIFIC FILES
+# ==========================================
+# VS Code
+.vscode/
+# PyCharm / JetBrains
+.idea/
+# General OS leftovers
+.DS_Store
+Thumbs.db
