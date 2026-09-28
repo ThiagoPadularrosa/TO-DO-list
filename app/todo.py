@@ -1,6 +1,7 @@
 tasks = []
 
-while True:
+if __name__ == "__main__": # Prevents todo from running when i start the server
+  while True:
     print("1. View Tasks:")
     print("2. Add Task:")
     print("3. Delete a Task:")
