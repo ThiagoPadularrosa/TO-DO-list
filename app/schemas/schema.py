@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-# The data structure (Schema) across reading and creation
+# The data structure (Schema) across reading and creation to validate the user send a correct str or int
 class TaskBase(BaseModel):
   title: str
   description: Optional[str] = None
