@@ -18,7 +18,7 @@ def get_task_by_id(db: Session, task_id: int):
 def get_all_tasks(db: Session, skip: int, limit: int = 100):
   return db.query(TaskModel).offset(skip).limit(limit).all()
 
-def update_task(db: Session, db_task: TaskModel, title: str | None, description: str | None, completed: bool | None):
+def update_task(db: Session, db_task: TaskModel, title: str, description: str | None, completed: bool):
   db_task.title = title
   db_task.description = description
   db_task.is_completed = completed

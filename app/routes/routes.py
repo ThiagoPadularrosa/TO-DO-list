@@ -22,7 +22,7 @@ async def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_
   tasks = get_all_tasks(db, skip=skip, limit=limit)
   return tasks
   
-@router.put("/task/{task_id}}", response_model=TaskResponse) 
+@router.put("/task/{task_id}", response_model=TaskResponse) 
 async def modify_task(task_id: int, updated_data: TaskResponse, db: Session = Depends(get_db)):
   db_task = get_task_by_id(db, task_id=task_id)
   if db_task is None:
@@ -36,7 +36,7 @@ async def modify_task(task_id: int, updated_data: TaskResponse, db: Session = De
     completed=updated_data.is_completed
   )
 
-@router.delete("/task/{task_id}}", response_model=TaskResponse)
+@router.delete("/task/{task_id}", response_model=TaskResponse)
 async def remove_task(task_id: int, db: Session =  Depends(get_db)):
   db_task = get_task_by_id(db, task_id=task_id)
   if db_task is None:
