@@ -36,7 +36,7 @@ def list_tasks(
       table.add_column("Description", style="green")
 
       for task in tasks:
-        status = "[green] Done[/green]" if task["completed"] else "[red]Pending[/red]"
+        status = "[green] Done[/green]" if task["is_completed"] else "[red]Pending[/red]"
         table.add_row(
           str(task["id"]),
           status,
