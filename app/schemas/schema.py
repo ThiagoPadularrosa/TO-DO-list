@@ -16,3 +16,8 @@ class TaskResponse(TaskBase):
 
   class Config:
       from_attributes = True # This allow Pydantic to read SQLAlchemy models
+
+class TaskUpdate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    is_completed: bool = False
