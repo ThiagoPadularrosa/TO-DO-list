@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.models.models import TaskModel
-from app.schemas.schema import TaskCreate
+from app.schemas.schema import TaskCreate, TaskUpdate
+import pymysql
 
 def create_task(db: Session, task: TaskCreate ):
   db_task = TaskModel(
@@ -18,13 +20,20 @@ def get_task_by_id(db: Session, task_id: int):
 def get_all_tasks(db: Session, skip: int, limit: int = 100):
   return db.query(TaskModel).offset(skip).limit(limit).all()
 
-def update_task(db: Session, db_task: TaskModel, title: str, description: str | None, completed: bool):
+def update_task(db: Session, db_task: TaskUpdate, title: str, description: str | None, completed: bool):
   db_task.title = title
   db_task.description = description
   db_task.is_completed = completed
-
-  db.commit()
-  db.refresh(db_task)
+  try:
+    db.commit()
+    db.refresh(db_task)
+  except IntegrityError as e:
+    db.rollback()
+    if isinstance(e.orig, pymysql.err.OperationalError) or isinstance(e.orig, pymysql.err.IntegrityError):
+      if e.orig.args[0] == 1062:
+        print("¡Error: Duplicated entry (Unique constraint violated)!")
+      else:
+        print(f"Another integrity error of MySQL: {e.orig}")
   return db_task
 
 def delete_task(db: Session, db_task: TaskModel):

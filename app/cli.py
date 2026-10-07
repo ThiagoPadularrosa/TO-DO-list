@@ -68,7 +68,7 @@ def add_task(
     console.print(f"[red]Failed to create task: {response.status_code}[/red]")
 
 @app.command()
-def update_task(
+def update_task( 
   task_id: int = typer.Argument(..., help="ID of the task to update"),
   title: str = typer.Option(..., prompt="Enter updated title", help="New title"),
   description: Optional[str] = typer.Option(None, "--desc", "-d", help="New description"),
@@ -77,6 +77,7 @@ def update_task(
   """
   Update/Modify an existing task's payload or completion status (PUT).
   """
+  # This has to map exactly the Pydantic model
   payload = {
     "id": task_id,
     "title": title,
@@ -88,9 +89,12 @@ def update_task(
     response = client.put(f"{BASE_URL}/user/task/{task_id}", json=payload)
 
   if response.status_code == 200:
-    console.print(f"[green]Task #{task_id}[/green] successfully synchronized with MySQL![/green]")
+    console.print(f"[green]Task #{task_id} successfully synchronized and updated with MySQL![/green]")
   elif response.status_code == 404:
     console.print(f"[yellow] Task #{task_id} does not exist.[/yellow]")
+  elif response.status_code == 422:
+    console.print(f"[red] Validation Error[/red]")
+    console.print(response.json())
   else:
     console.print(f"[red]Error updating resource: {response.status_code}[/red]")
 
