@@ -111,15 +111,19 @@ def remove(task_id: int = typer.Argument(..., help="ID of the task to vaporize")
   """
     Permanently drop a task row by ID (DELETE)
   """
-  with httpx.Client() as client:
-    response = client.delete(f"{BASE_URL}/user/task/{task_id}")
-    if response.status_code == 204:
-      typer.confirm("Are you sure?")
-      console.print(f"[green]Task #{task_id} dropped successfully from database.[/green]")
-    elif response.status_code == 404:
-      console.print(f"[yellow]Task #{task_id} not found.[/yellow]")
-    else:
-      console.print(f"[red]Server error: {response.status_code}[/red]")
+  req_confirmation = typer.confirm("Are you sure?")
+
+  if req_confirmation == True:
+    with httpx.Client() as client:
+      response = client.delete(f"{BASE_URL}/user/task/{task_id}")
+      if response.status_code == 204:
+        console.print(f"[green]Task #{task_id} dropped successfully from database.[/green]")
+      elif response.status_code == 404:
+        console.print(f"[yellow]Task #{task_id} not found.[/yellow]")
+      else:
+        console.print(f"[red]Server error: {response.status_code}[/red]")
+  else:
+    console.print("Delete task aborted")
 
 if __name__ == "__main__":
   app()
