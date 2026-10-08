@@ -20,4 +20,4 @@ class TaskResponse(TaskBase):
 class TaskUpdate(BaseModel):
     title: str
     description: Optional[str] = None
-    is_completed: bool = False
+    is_completed: bool

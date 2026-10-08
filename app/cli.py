@@ -70,33 +70,41 @@ def add_task(
 @app.command()
 def update_task( 
   task_id: int = typer.Argument(..., help="ID of the task to update"),
-  title: str = typer.Option(..., prompt="Enter updated title", help="New title"),
-  description: Optional[str] = typer.Option(None, "--desc", "-d", help="New description"),
-  completed: bool = typer.Option(False, "--done", "-g", help="Toggle complete status")
 ):
   """
   Update/Modify an existing task's payload or completion status (PUT).
   """
-  # This has to map exactly the Pydantic model
-  payload = {
-    "id": task_id,
-    "title": title,
-    "description": description,
-    "completed": completed,
-  }
-
   with httpx.Client() as client:
-    response = client.put(f"{BASE_URL}/user/task/{task_id}", json=payload)
+    response = client.get(f"{BASE_URL}/user/task/{task_id}")
+    if response.status_code == 200:
+      existing_task = response.json()
+      new_title = typer.prompt("Enter updated title", default=existing_task["title"])
+      new_description = typer.prompt("Enter updated description", default=existing_task["description"])
+      new_completed = typer.confirm("Is this task completed?", default=existing_task["is_completed"])
 
-  if response.status_code == 200:
-    console.print(f"[green]Task #{task_id} successfully synchronized and updated with MySQL![/green]")
-  elif response.status_code == 404:
-    console.print(f"[yellow] Task #{task_id} does not exist.[/yellow]")
-  elif response.status_code == 422:
-    console.print(f"[red] Validation Error[/red]")
-    console.print(response.json())
-  else:
-    console.print(f"[red]Error updating resource: {response.status_code}[/red]")
+      # This has to map exactly the Pydantic model
+      payload = {
+        "title": new_title,
+        "description": new_description,
+        "is_completed": new_completed
+      } 
+
+      response2 = client.put(f"{BASE_URL}/user/task/{task_id}", json=payload)
+      if response2.status_code == 200:
+        console.print(f"[green]Task #{task_id} successfully synchronized and updated with MySQL![/green]")
+        console.print(response2.json())
+      else:
+        console.print(f"[red]Failed to apply update. Server returned status: {response2.status_code}")
+        console.print(response2.json())
+
+    elif response.status_code == 404:
+      console.print(f"[yellow] Task #{task_id} does not exist.[/yellow]")
+      raise typer.Exit()
+    elif response.status_code == 422:
+      console.print(f"[red] Validation Error[/red]")
+      console.print(response.json())
+    else:
+      console.print(f"[red]Error updating resource: {response.status_code}[/red]")
 
 @app.command()
 def remove(task_id: int = typer.Argument(..., help="ID of the task to vaporize")):

@@ -33,7 +33,7 @@ def modify_task(task_id: int, updated_data: TaskUpdate, db: Session = Depends(ge
     db_task=db_task,
     title=updated_data.title,
     description=updated_data.description,
-    completed=updated_data.is_completed
+    is_completed=updated_data.is_completed
   )
 
 @router.delete("/task/{task_id}", response_model=TaskResponse)
